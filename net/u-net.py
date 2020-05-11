@@ -59,9 +59,9 @@ class Up(torch.nn.Module):
         x = self.conv_block(x)
         return x
 
-class Unet(torch.nn.Module):
+class Model(torch.nn.Module):
     def __init__(self, in_channels, n_classes):
-        super(Unet, self).__init__()
+        super(Model, self).__init__()
 
         self.down1 = Down(in_channels, 64, 0, None)
         self.down2 = Down(64, 128, 0, 'MaxPool')
@@ -99,7 +99,7 @@ class Unet(torch.nn.Module):
 if __name__ == "__main__":
     x = torch.rand((1, 3, 572, 572))
 
-    model = Unet(3, 10)
+    model = Model(3, 9)
 
     out = model(x)
     print(x.shape, out.shape)

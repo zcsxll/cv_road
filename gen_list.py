@@ -2,7 +2,7 @@ import os
 import pandas as pd
 
 def gen_list():
-    root = '/home/cszhao/dataset/cv/ColorImage'
+    root = '/home/zhaochengshuai/dataset/cv/ColorImage'
     inputs = []
     zcs(root, inputs)
     print(len(inputs))
