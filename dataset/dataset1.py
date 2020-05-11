@@ -13,6 +13,7 @@ class Dataset(torch.utils.data.Dataset):
         # print(self.images[0])
 
     def __getitem__(self, idx):
+        print(self.images[idx])
         img_x = Image.open(self.images[idx][0])
         img_x = img_x.resize((1692, 855))
         img_x = np.array(img_x).transpose(2, 0, 1)

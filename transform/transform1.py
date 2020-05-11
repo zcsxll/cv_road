@@ -1,5 +1,6 @@
 import numpy as np
 import torch
+import matplotlib.pyplot as plt
 
 class Transform:
     def __init__(self):
@@ -8,55 +9,36 @@ class Transform:
     def __call__(self, img_x, img_label):
         # print(img_x.shape, img_label.shape)
         img_x = img_x / 127.0 - 1
-        img_label = np.where(img_label == 200, 1, img_label)
-        img_label = np.where(img_label == 204, 1, img_label)
-        img_label = np.where(img_label == 213, 1, img_label)
-        img_label = np.where(img_label == 209, 1, img_label)
-        img_label = np.where(img_label == 206, 1, img_label)
-        img_label = np.where(img_label == 207, 1, img_label)
 
-        img_label = np.where(img_label == 201, 2, img_label)
-        img_label = np.where(img_label == 203, 2, img_label)
-        img_label = np.where(img_label == 211, 2, img_label)
-        img_label = np.where(img_label == 208, 2, img_label)
+        # label = np.zeros((9, img_label.shape[0], img_label.shape[1]))
+        label = np.stack([img_label] * 9)
 
-        img_label = np.where(img_label == 216, 3, img_label)
-        img_label = np.where(img_label == 217, 3, img_label)
-        img_label = np.where(img_label == 215, 3, img_label)
+        label[0] = np.where((label[0] == 0) | (label[0] == 249) | (label[0] == 255), 1, 0)
+        label[1] = np.where((label[1] == 200) | (label[1] == 204) | (label[1] == 213) | (label[1] == 209) | (label[1] == 206) | (label[1] == 207), 1, 0)
+        label[2] = np.where((label[2] == 201) | (label[2] == 203) | (label[2] == 211) | (label[2] == 208), 1, 0)
+        label[3] = np.where((label[3] == 216) | (label[3] == 217) | (label[3] == 215), 1, 0)
+        label[4] = np.where((label[4] == 218) | (label[4] == 219), 1, 0)
+        label[5] = np.where((label[5] == 210) | (label[5] == 232), 1, 0)
+        label[6] = np.where(label[6] == 214, 1, 0)
+        label[7] = np.where((label[7] == 202)
+                            | (label[7] == 220)
+                            | (label[7] == 220)
+                            | (label[7] == 221)
+                            | (label[7] == 222)
+                            | (label[7] == 231)
+                            | (label[7] == 224)
+                            | (label[7] == 225)
+                            | (label[7] == 226)
+                            | (label[7] == 230)
+                            | (label[7] == 228)
+                            | (label[7] == 229)
+                            | (label[7] == 233), 1, 0)
+        label[8] = np.where((label[8] == 205) | (label[8] == 212) | (label[8] == 227) | (label[8] == 223) | (label[8] == 250), 1, 0)
 
-        img_label = np.where(img_label == 218, 4, img_label)
-        img_label = np.where(img_label == 219, 4, img_label)
+        # for i in range(9):
+        #     plt.figure()
+        #     plt.imshow(label[i])
+        #     plt.savefig('./label%d.jpg' % i)
+        #     plt.close()
 
-        img_label = np.where(img_label == 210, 5, img_label)
-        img_label = np.where(img_label == 232, 5, img_label)
-
-        img_label = np.where(img_label == 214, 6, img_label)
-
-        img_label = np.where(img_label == 202, 7, img_label)
-        img_label = np.where(img_label == 220, 7, img_label)
-        img_label = np.where(img_label == 221, 7, img_label)
-        img_label = np.where(img_label == 222, 7, img_label)
-        img_label = np.where(img_label == 231, 7, img_label)
-        img_label = np.where(img_label == 224, 7, img_label)
-        img_label = np.where(img_label == 225, 7, img_label)
-        img_label = np.where(img_label == 226, 7, img_label)
-        img_label = np.where(img_label == 230, 7, img_label)
-        img_label = np.where(img_label == 228, 7, img_label)
-        img_label = np.where(img_label == 229, 7, img_label)
-        img_label = np.where(img_label == 233, 7, img_label)
-
-        img_label = np.where(img_label == 205, 8, img_label)
-        img_label = np.where(img_label == 212, 8, img_label)
-        img_label = np.where(img_label == 227, 8, img_label)
-        img_label = np.where(img_label == 223, 8, img_label)
-        img_label = np.where(img_label == 250, 8, img_label)
-
-        img_label = np.where(img_label == 249, 0, img_label)
-        img_label = np.where(img_label == 255, 0, img_label)
-
-
-        ret = img_label[img_label > 8]
-        assert len(ret) == 0
-        # print(len(ret))
-
-        return torch.FloatTensor(img_x), torch.FloatTensor(img_label)
+        return torch.FloatTensor(img_x), torch.FloatTensor(label)
