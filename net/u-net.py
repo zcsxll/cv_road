@@ -57,6 +57,7 @@ class Up(torch.nn.Module):
         x = torch.cat([x1, x2], 1)
         # print(x.shape)
         x = self.conv_block(x)
+        # print(x.shape)
         return x
 
 class Model(torch.nn.Module):
@@ -69,12 +70,13 @@ class Model(torch.nn.Module):
         self.down4 = Down(256, 512, 0, 'MaxPool')
         self.down5 = Down(512, 1024, 0, 'MaxPool')
 
-        self.up1 = Up(1024, 512, 0)
-        self.up2 = Up(512, 256, 0)
-        self.up3 = Up(256, 128, 0)
-        self.up4 = Up(128, 64, 0)
+        self.up1 = Up(1024, 512, 1)
+        self.up2 = Up(512, 256, 1)
+        self.up3 = Up(256, 128, 1)
+        self.up4 = Up(128, 64, 1)
 
         self.last = torch.nn.Conv2d(64, n_classes, kernel_size=1)
+        self.bilinear_upsample = torch.nn.UpsamplingBilinear2d(size=(384, 1024))
 
     def forward(self, x):
         x1 = self.down1(x)
@@ -86,20 +88,25 @@ class Model(torch.nn.Module):
         x4 = self.down4(x3)
         # print(x4.shape)
         x5 = self.down5(x4)
-        # print(x5.shape)
+        # print(x5.shape, "=====")
 
         x = self.up1(x5, x4)
+        # print(x.shape)
         x = self.up2(x, x3)
+        # print(x.shape)
         x = self.up3(x, x2)
+        # print(x.shape)
         x = self.up4(x, x1)
+        # print(x.shape)
 
         x = self.last(x)
+        x = self.bilinear_upsample(x)
         return x
 
 if __name__ == "__main__":
-    x = torch.rand((1, 3, 572, 572))
+    x = torch.rand((1, 3, 384, 1024))
 
-    model = Model(3, 9)
+    model = Model(3, 1)
 
     out = model(x)
     print(x.shape, out.shape)
